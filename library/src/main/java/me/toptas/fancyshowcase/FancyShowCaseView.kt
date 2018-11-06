@@ -346,14 +346,20 @@ class FancyShowCaseView : FrameLayout, ViewTreeObserver.OnGlobalLayoutListener {
                     val x = event.x
                     val y = event.y
 
+                    val focusCenterX = calculator?.circleCenterX ?: this.focusCenterX
+                    val focusCenterY = calculator?.circleCenterY ?: this.focusCenterY
+
                     when (mFocusShape) {
                         FocusShape.CIRCLE -> {
                             val distance = Math.sqrt(
                                     Math.pow((focusCenterX - x).toDouble(), 2.0) + Math.pow((focusCenterY - y).toDouble(), 2.0))
 
-                            isWithin = Math.abs(distance) < focusRadius
+                            isWithin = Math.abs(distance) < (calculator?.viewRadius ?: focusRadius)
                         }
                         FocusShape.ROUNDED_RECTANGLE -> {
+                            val focusWidth = calculator?.focusWidth ?: this.focusWidth
+                            val focusHeight = calculator?.focusHeight ?: this.focusHeight
+
                             val rect = Rect()
                             val left = focusCenterX - focusWidth / 2
                             val right = focusCenterX + focusWidth / 2
