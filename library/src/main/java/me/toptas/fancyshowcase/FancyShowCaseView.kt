@@ -98,17 +98,15 @@ class FancyShowCaseView : FrameLayout, ViewTreeObserver.OnGlobalLayoutListener {
     private var fancyImageView: FancyImageView? = null
     var dismissListener: DismissListener? = null
 
-    val focusCenterX = calculator?.circleCenterX ?: 0
+    val focusCenterX: Int get() = calculator?.circleCenterX ?: 0
 
-    val focusCenterY = calculator?.circleCenterY ?: 0
+    val focusCenterY: Int get() = calculator?.circleCenterY ?: 0
 
-    val focusRadius = if (FocusShape.CIRCLE == mFocusShape)
-        calculator?.circleRadius(0, 1.0) ?: 0f
-    else 0f
+    val focusRadius: Float get() = if (FocusShape.CIRCLE == mFocusShape) calculator?.circleRadius(0, 1.0) ?: 0f else 0f
 
-    val focusWidth = calculator?.focusWidth ?: 0
+    val focusWidth: Int get() = calculator?.focusWidth ?: 0
 
-    val focusHeight = calculator?.focusHeight ?: 0
+    val focusHeight: Int get() = calculator?.focusHeight ?: 0
 
     internal constructor(context: Context) : super(context)
 
