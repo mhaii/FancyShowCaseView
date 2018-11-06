@@ -276,13 +276,11 @@ class FancyShowCaseView : FrameLayout, ViewTreeObserver.OnGlobalLayoutListener {
                 return@Runnable
             }
             val visibleView = mRoot?.findViewWithTag<View>(CONTAINER_TAG) as FancyShowCaseView?
-            isClickable = !mEnableTouchOnFocusedView
+            isClickable = true
             if (visibleView == null) {
                 tag = CONTAINER_TAG
                 setId(R.id.fscv_id)
-                if (mCloseOnTouch) {
-                    setupTouchListener()
-                }
+                setupTouchListener()
                 layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                         ViewGroup.LayoutParams.MATCH_PARENT)
                 mRoot?.addView(this)
@@ -368,6 +366,7 @@ class FancyShowCaseView : FrameLayout, ViewTreeObserver.OnGlobalLayoutListener {
 
                     // let the touch event pass on to whoever needs it
                     if (isWithin) {
+                        hide()
                         return@OnTouchListener false
                     } else {
                         if (mCloseOnTouch) {
