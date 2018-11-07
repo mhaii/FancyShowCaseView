@@ -45,6 +45,7 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import me.toptas.fancyshowcase.listener.AnimationListener
 import me.toptas.fancyshowcase.listener.DismissListener
+import me.toptas.fancyshowcase.listener.OnFocusedTouchListener
 import me.toptas.fancyshowcase.listener.OnViewInflateListener
 
 /**
@@ -96,6 +97,8 @@ class FancyShowCaseView : FrameLayout, ViewTreeObserver.OnGlobalLayoutListener {
     private var mFocusRectangleHeight: Int = 0
     private var focusAnimationEnabled: Boolean = true
     private var fancyImageView: FancyImageView? = null
+    private var mOnClickListener: View.OnClickListener? = null
+    private var mOnTouchListener: OnFocusedTouchListener? = null
     var dismissListener: DismissListener? = null
 
     val focusCenterX: Int get() = calculator?.circleCenterX ?: 0
@@ -183,7 +186,9 @@ class FancyShowCaseView : FrameLayout, ViewTreeObserver.OnGlobalLayoutListener {
                         _focusAnimationMaxValue: Int,
                         _focusAnimationStep: Int,
                         _delay: Long,
-                        _autoPosText: Boolean) : super(_activity) {
+                        _autoPosText: Boolean,
+                        _mOnClickListener: OnClickListener?,
+                        _mOnTouchListener: OnFocusedTouchListener?) : super(_activity) {
 
         requireNotNull(_activity)
         id = _id
@@ -220,6 +225,8 @@ class FancyShowCaseView : FrameLayout, ViewTreeObserver.OnGlobalLayoutListener {
         mFocusAnimationStep = _focusAnimationStep
         delay = _delay
         autoPosText = _autoPosText
+        mOnClickListener = _mOnClickListener
+        mOnTouchListener = _mOnTouchListener
 
         initializeParameters()
     }
@@ -338,44 +345,52 @@ class FancyShowCaseView : FrameLayout, ViewTreeObserver.OnGlobalLayoutListener {
 
     private fun setupTouchListener() {
         if (mEnableTouchOnFocusedView) {
-            setOnTouchListener(OnTouchListener { _, event ->
-                if (event.actionMasked == MotionEvent.ACTION_DOWN) {
-                    var isWithin = false
-                    val x = event.x
-                    val y = event.y
+            setOnTouchListener(OnTouchListener { view, event ->
+                var isWithin = false
+                val x = event.x
+                val y = event.y
 
-                    when (mFocusShape) {
-                        FocusShape.CIRCLE -> {
-                            val distance = Math.sqrt(
-                                    Math.pow((focusCenterX - x).toDouble(), 2.0) + Math.pow((focusCenterY - y).toDouble(), 2.0))
+                when (mFocusShape) {
+                    FocusShape.CIRCLE -> {
+                        val distance = Math.sqrt(
+                                Math.pow((focusCenterX - x).toDouble(), 2.0) + Math.pow((focusCenterY - y).toDouble(), 2.0))
 
-                            isWithin = Math.abs(distance) < focusRadius
-                        }
-                        FocusShape.ROUNDED_RECTANGLE -> {
-                            val rect = Rect()
-                            val left = focusCenterX - focusWidth / 2
-                            val right = focusCenterX + focusWidth / 2
-                            val top = focusCenterY - focusHeight / 2
-                            val bottom = focusCenterY + focusHeight / 2
-                            rect.set(left, top, right, bottom)
-                            isWithin = rect.contains(x.toInt(), y.toInt())
-                        }
+                        isWithin = Math.abs(distance) < focusRadius
                     }
-
-                    // let the touch event pass on to whoever needs it
-                    if (isWithin) {
-                        hide()
-                        return@OnTouchListener false
-                    } else {
-                        if (mCloseOnTouch) {
-                            hide()
-                        }
+                    FocusShape.ROUNDED_RECTANGLE -> {
+                        val rect = Rect()
+                        val left = focusCenterX - focusWidth / 2
+                        val right = focusCenterX + focusWidth / 2
+                        val top = focusCenterY - focusHeight / 2
+                        val bottom = focusCenterY + focusHeight / 2
+                        rect.set(left, top, right, bottom)
+                        isWithin = rect.contains(x.toInt(), y.toInt())
                     }
                 }
+
+                val eventHandled = mOnTouchListener?.onTouch(view, event, isWithin)
+
+                if (event.actionMasked == MotionEvent.ACTION_DOWN) {
+                    // let the touch event pass on to whoever needs it
+                    if (isWithin) {
+                        mOnClickListener?.onClick(view)
+                        if (eventHandled != true) {
+                            hide()
+                            return@OnTouchListener false
+                        }
+                    } else if (mCloseOnTouch) {
+                        mOnClickListener?.onClick(view)
+                        hide()
+                    }
+                }
+
                 true
             })
         } else {
-            setOnClickListener { hide() }
+            setOnClickListener {
+                mOnClickListener?.onClick(it)
+                hide()
+            }
         }
 
     }
@@ -619,6 +634,8 @@ class FancyShowCaseView : FrameLayout, ViewTreeObserver.OnGlobalLayoutListener {
         private var mFocusAnimationStep = 1
         private var delay: Long = 0
         private var autoPosText = false
+        private var mOnClickListener: View.OnClickListener? = null
+        private var mOnTouchListener: OnFocusedTouchListener? = null
 
 
         /**
@@ -880,6 +897,20 @@ class FancyShowCaseView : FrameLayout, ViewTreeObserver.OnGlobalLayoutListener {
             return this
         }
 
+        fun setOnClickListener(onClickListener: OnClickListener): Builder {
+            if (mOnTouchListener == null) {
+                mOnClickListener = onClickListener
+            }
+            return this
+        }
+
+        fun setOnTouchListener(onTouchListener: OnFocusedTouchListener): Builder {
+            if (mOnClickListener == null) {
+                mOnTouchListener = onTouchListener
+            }
+            return this
+        }
+
         /**
          * builds the builder
          *
@@ -890,7 +921,7 @@ class FancyShowCaseView : FrameLayout, ViewTreeObserver.OnGlobalLayoutListener {
                     focusCircleRadiusFactor, mBackgroundColor, mFocusBorderColor, mFocusBorderSize, mCustomViewRes, viewInflateListener,
                     mEnterAnimation, mExitAnimation, mAnimationListener, mCloseOnTouch, mEnableTouchOnFocusedView, fitSystemWindows, mFocusShape, mDismissListener, mRoundRectRadius,
                     mFocusPositionX, mFocusPositionY, mFocusCircleRadius, mFocusRectangleWidth, mFocusRectangleHeight, focusAnimationEnabled,
-                    mFocusAnimationMaxValue, mFocusAnimationStep, delay, autoPosText)
+                    mFocusAnimationMaxValue, mFocusAnimationStep, delay, autoPosText, mOnClickListener, mOnTouchListener)
         }
     }
 
