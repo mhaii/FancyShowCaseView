@@ -399,24 +399,21 @@ class FancyShowCaseView : FrameLayout, ViewTreeObserver.OnGlobalLayoutListener {
      * Starts enter animation of FancyShowCaseView
      */
     private fun startEnterAnimation() {
-        when {
-            mEnterAnimation != null -> startAnimation(mEnterAnimation)
-            shouldShowCircularAnimation() -> doCircularEnterAnimation()
-            else -> {
-                val fadeInAnimation = AnimationUtils.loadAnimation(activity, R.anim.fscv_fade_in)
-                fadeInAnimation.fillAfter = true
-                fadeInAnimation.setAnimationListener(object : Animation.AnimationListener {
+        if (mEnterAnimation == null && shouldShowCircularAnimation()) {
+            doCircularEnterAnimation()
+        } else {
+            val enterAnimation = mEnterAnimation ?: AnimationUtils.loadAnimation(activity, R.anim.fscv_fade_in)
+            enterAnimation.setAnimationListener(object : Animation.AnimationListener {
+                override fun onAnimationEnd(animation: Animation) {
+                    mAnimationListener?.onEnterAnimationEnd()
+                }
 
-                    override fun onAnimationEnd(animation: Animation) {
-                        mAnimationListener?.onEnterAnimationEnd()
-                    }
+                override fun onAnimationRepeat(p0: Animation?) {}
 
-                    override fun onAnimationRepeat(p0: Animation?) {}
-
-                    override fun onAnimationStart(p0: Animation?) {}
-                })
-                startAnimation(fadeInAnimation)
-            }
+                override fun onAnimationStart(p0: Animation?) {}
+            })
+            enterAnimation.fillAfter = true
+            startAnimation(enterAnimation)
         }
     }
 
@@ -424,24 +421,22 @@ class FancyShowCaseView : FrameLayout, ViewTreeObserver.OnGlobalLayoutListener {
      * Hides FancyShowCaseView with animation
      */
     fun hide() {
-        when {
-            mExitAnimation != null -> startAnimation(mExitAnimation)
-            shouldShowCircularAnimation() -> doCircularExitAnimation()
-            else -> {
-                val fadeOut = AnimationUtils.loadAnimation(activity, R.anim.fscv_fade_out)
-                fadeOut.setAnimationListener(object : Animation.AnimationListener {
-                    override fun onAnimationEnd(animation: Animation) {
-                        removeView()
-                        mAnimationListener?.onExitAnimationEnd()
-                    }
+        if (mExitAnimation == null && shouldShowCircularAnimation()) {
+            doCircularExitAnimation()
+        } else {
+            val exitAnimation = mExitAnimation ?: AnimationUtils.loadAnimation(activity, R.anim.fscv_fade_out)
+            exitAnimation.setAnimationListener(object : Animation.AnimationListener {
+                override fun onAnimationEnd(animation: Animation) {
+                    removeView()
+                    mAnimationListener?.onExitAnimationEnd()
+                }
 
-                    override fun onAnimationRepeat(p0: Animation?) {}
+                override fun onAnimationRepeat(p0: Animation?) {}
 
-                    override fun onAnimationStart(p0: Animation?) {}
-                })
-                fadeOut.fillAfter = true
-                startAnimation(fadeOut)
-            }
+                override fun onAnimationStart(p0: Animation?) {}
+            })
+            exitAnimation.fillAfter = true
+            startAnimation(exitAnimation)
         }
     }
 
