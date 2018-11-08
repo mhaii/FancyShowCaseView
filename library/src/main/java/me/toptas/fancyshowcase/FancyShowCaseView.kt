@@ -187,8 +187,8 @@ class FancyShowCaseView : FrameLayout, ViewTreeObserver.OnGlobalLayoutListener {
                         _focusAnimationStep: Int,
                         _delay: Long,
                         _autoPosText: Boolean,
-                        _mOnClickListener: OnClickListener?,
-                        _mOnTouchListener: OnFocusedTouchListener?) : super(_activity) {
+                        _onClickListener: OnClickListener?,
+                        _onTouchListener: OnFocusedTouchListener?) : super(_activity) {
 
         requireNotNull(_activity)
         id = _id
@@ -225,8 +225,8 @@ class FancyShowCaseView : FrameLayout, ViewTreeObserver.OnGlobalLayoutListener {
         mFocusAnimationStep = _focusAnimationStep
         delay = _delay
         autoPosText = _autoPosText
-        mOnClickListener = _mOnClickListener
-        mOnTouchListener = _mOnTouchListener
+        mOnClickListener = _onClickListener
+        mOnTouchListener = _onTouchListener
 
         initializeParameters()
     }
