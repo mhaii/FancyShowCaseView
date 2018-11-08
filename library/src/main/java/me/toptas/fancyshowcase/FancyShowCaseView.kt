@@ -97,6 +97,7 @@ class FancyShowCaseView : FrameLayout, ViewTreeObserver.OnGlobalLayoutListener {
     private var mFocusRectangleHeight: Int = 0
     private var focusAnimationEnabled: Boolean = true
     private var fancyImageView: FancyImageView? = null
+    private var mRequiredTouchAction = MotionEvent.ACTION_DOWN
     private var mOnClickListener: View.OnClickListener? = null
     private var mOnTouchListener: OnFocusedTouchListener? = null
     var dismissListener: DismissListener? = null
@@ -187,6 +188,7 @@ class FancyShowCaseView : FrameLayout, ViewTreeObserver.OnGlobalLayoutListener {
                         _focusAnimationStep: Int,
                         _delay: Long,
                         _autoPosText: Boolean,
+                        _requiredTouchAction: Int,
                         _onClickListener: OnClickListener?,
                         _onTouchListener: OnFocusedTouchListener?) : super(_activity) {
 
@@ -225,6 +227,7 @@ class FancyShowCaseView : FrameLayout, ViewTreeObserver.OnGlobalLayoutListener {
         mFocusAnimationStep = _focusAnimationStep
         delay = _delay
         autoPosText = _autoPosText
+        mRequiredTouchAction = _requiredTouchAction
         mOnClickListener = _onClickListener
         mOnTouchListener = _onTouchListener
 
@@ -370,7 +373,7 @@ class FancyShowCaseView : FrameLayout, ViewTreeObserver.OnGlobalLayoutListener {
 
                 val eventHandled = mOnTouchListener?.onTouch(view, event, isWithin)
 
-                if (event.actionMasked == MotionEvent.ACTION_DOWN) {
+                if (event.actionMasked == mRequiredTouchAction) {
                     // let the touch event pass on to whoever needs it
                     if (isWithin) {
                         mOnClickListener?.onClick(view)
@@ -384,7 +387,7 @@ class FancyShowCaseView : FrameLayout, ViewTreeObserver.OnGlobalLayoutListener {
                     }
                 }
 
-                true
+                return@OnTouchListener !isWithin
             })
         } else {
             setOnClickListener {
@@ -629,6 +632,7 @@ class FancyShowCaseView : FrameLayout, ViewTreeObserver.OnGlobalLayoutListener {
         private var mFocusAnimationStep = 1
         private var delay: Long = 0
         private var autoPosText = false
+        private var mRequiredTouchAction = MotionEvent.ACTION_DOWN
         private var mOnClickListener: View.OnClickListener? = null
         private var mOnTouchListener: OnFocusedTouchListener? = null
 
@@ -892,6 +896,11 @@ class FancyShowCaseView : FrameLayout, ViewTreeObserver.OnGlobalLayoutListener {
             return this
         }
 
+        fun setRequiredTouchAction(touchAction: Int): Builder {
+            mRequiredTouchAction = touchAction
+            return this
+        }
+
         fun setOnClickListener(onClickListener: OnClickListener): Builder {
             if (mOnTouchListener == null) {
                 mOnClickListener = onClickListener
@@ -916,7 +925,7 @@ class FancyShowCaseView : FrameLayout, ViewTreeObserver.OnGlobalLayoutListener {
                     focusCircleRadiusFactor, mBackgroundColor, mFocusBorderColor, mFocusBorderSize, mCustomViewRes, viewInflateListener,
                     mEnterAnimation, mExitAnimation, mAnimationListener, mCloseOnTouch, mEnableTouchOnFocusedView, fitSystemWindows, mFocusShape, mDismissListener, mRoundRectRadius,
                     mFocusPositionX, mFocusPositionY, mFocusCircleRadius, mFocusRectangleWidth, mFocusRectangleHeight, focusAnimationEnabled,
-                    mFocusAnimationMaxValue, mFocusAnimationStep, delay, autoPosText, mOnClickListener, mOnTouchListener)
+                    mFocusAnimationMaxValue, mFocusAnimationStep, delay, autoPosText, mRequiredTouchAction, mOnClickListener, mOnTouchListener)
         }
     }
 
