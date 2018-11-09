@@ -98,6 +98,7 @@ class FancyShowCaseView : FrameLayout, ViewTreeObserver.OnGlobalLayoutListener {
     private var focusAnimationEnabled: Boolean = true
     private var fancyImageView: FancyImageView? = null
     private var mRequiredTouchAction = MotionEvent.ACTION_DOWN
+    private var mAllowClickThrough = false
     private var mOnClickListener: View.OnClickListener? = null
     private var mOnTouchListener: OnFocusedTouchListener? = null
     var dismissListener: DismissListener? = null
@@ -188,6 +189,7 @@ class FancyShowCaseView : FrameLayout, ViewTreeObserver.OnGlobalLayoutListener {
                         _focusAnimationStep: Int,
                         _delay: Long,
                         _autoPosText: Boolean,
+                        _allowClickThrough: Boolean,
                         _requiredTouchAction: Int,
                         _onClickListener: OnClickListener?,
                         _onTouchListener: OnFocusedTouchListener?) : super(_activity) {
@@ -227,6 +229,7 @@ class FancyShowCaseView : FrameLayout, ViewTreeObserver.OnGlobalLayoutListener {
         mFocusAnimationStep = _focusAnimationStep
         delay = _delay
         autoPosText = _autoPosText
+        mAllowClickThrough = _allowClickThrough
         mRequiredTouchAction = _requiredTouchAction
         mOnClickListener = _onClickListener
         mOnTouchListener = _onTouchListener
@@ -284,7 +287,7 @@ class FancyShowCaseView : FrameLayout, ViewTreeObserver.OnGlobalLayoutListener {
                 return@Runnable
             }
             val visibleView = mRoot?.findViewWithTag<View>(CONTAINER_TAG) as FancyShowCaseView?
-            isClickable = true
+            isClickable = !mAllowClickThrough
             if (visibleView == null) {
                 tag = CONTAINER_TAG
                 setId(R.id.fscv_id)
@@ -632,6 +635,7 @@ class FancyShowCaseView : FrameLayout, ViewTreeObserver.OnGlobalLayoutListener {
         private var mFocusAnimationStep = 1
         private var delay: Long = 0
         private var autoPosText = false
+        private var mAllowClickThrough = false
         private var mRequiredTouchAction = MotionEvent.ACTION_DOWN
         private var mOnClickListener: View.OnClickListener? = null
         private var mOnTouchListener: OnFocusedTouchListener? = null
@@ -896,6 +900,11 @@ class FancyShowCaseView : FrameLayout, ViewTreeObserver.OnGlobalLayoutListener {
             return this
         }
 
+        fun setAllowClickThrough(allowClickThrough: Boolean): Builder {
+            mAllowClickThrough = allowClickThrough
+            return this
+        }
+
         fun setRequiredTouchAction(touchAction: Int): Builder {
             mRequiredTouchAction = touchAction
             return this
@@ -925,7 +934,7 @@ class FancyShowCaseView : FrameLayout, ViewTreeObserver.OnGlobalLayoutListener {
                     focusCircleRadiusFactor, mBackgroundColor, mFocusBorderColor, mFocusBorderSize, mCustomViewRes, viewInflateListener,
                     mEnterAnimation, mExitAnimation, mAnimationListener, mCloseOnTouch, mEnableTouchOnFocusedView, fitSystemWindows, mFocusShape, mDismissListener, mRoundRectRadius,
                     mFocusPositionX, mFocusPositionY, mFocusCircleRadius, mFocusRectangleWidth, mFocusRectangleHeight, focusAnimationEnabled,
-                    mFocusAnimationMaxValue, mFocusAnimationStep, delay, autoPosText, mRequiredTouchAction, mOnClickListener, mOnTouchListener)
+                    mFocusAnimationMaxValue, mFocusAnimationStep, delay, autoPosText, mAllowClickThrough, mRequiredTouchAction, mOnClickListener, mOnTouchListener)
         }
     }
 
