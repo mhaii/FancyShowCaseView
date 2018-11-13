@@ -401,6 +401,10 @@ class FancyShowCaseView : FrameLayout, ViewTreeObserver.OnGlobalLayoutListener {
 
     }
 
+    public fun setOnFocusedTouchListener(listener: OnFocusedTouchListener) {
+        this.mOnTouchListener = listener
+    }
+
     /**
      * Starts enter animation of FancyShowCaseView
      */
