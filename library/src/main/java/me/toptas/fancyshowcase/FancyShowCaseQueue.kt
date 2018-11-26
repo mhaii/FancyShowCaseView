@@ -30,7 +30,7 @@ class FancyShowCaseQueue : DismissListener {
     private val queue: Queue<FancyShowCaseView> = LinkedList()
     var current: FancyShowCaseView? = null
     var completeListener: OnCompleteListener? = null
-
+    var dismissListener: DismissListener? = null
 
     /**
      * Adds a FancyShowCaseView to the queue
@@ -67,8 +67,20 @@ class FancyShowCaseQueue : DismissListener {
         if (queue.isNotEmpty()) queue.clear()
     }
 
-    override fun onDismiss(id: String?) = show()
+    override fun onDismiss(id: String?) {
+        if (dismissListener != null) {
+            dismissListener!!.onDismiss(id)
+        } else {
+            show()
+        }
+    }
 
-    override fun onSkipped(id: String?) = show()
+    override fun onSkipped(id: String?) {
+        if (dismissListener != null) {
+            dismissListener!!.onSkipped(id)
+        } else {
+            show()
+        }
+    }
 
 }
