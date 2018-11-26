@@ -42,7 +42,7 @@ class CustomQueueActivity : BaseActivity() {
                 .title("First Queue Item")
                 .focusOn(btn_queue_1)
                 .customView(R.layout.layout_my_custom_view, object : OnViewInflateListener {
-                    override fun onViewInflated(view: View) {
+                    override fun onViewInflated(view: View, showcase: FancyShowCaseView) {
                         view.findViewById<View>(R.id.btn_action_1).setOnClickListener(mClickListener)
                     }
                 })
@@ -53,7 +53,7 @@ class CustomQueueActivity : BaseActivity() {
                 .title("Second Queue Item")
                 .focusOn(btn_queue_2)
                 .customView(R.layout.layout_my_custom_view, object : OnViewInflateListener {
-                    override fun onViewInflated(view: View) {
+                    override fun onViewInflated(view: View, showcase: FancyShowCaseView) {
                         view.findViewById<View>(R.id.btn_action_1).setOnClickListener(mClickListener)
                     }
                 })
@@ -64,7 +64,7 @@ class CustomQueueActivity : BaseActivity() {
                 .title("Third Queue Item")
                 .focusOn(btn_queue_3!!)
                 .customView(R.layout.layout_my_custom_view, object : OnViewInflateListener {
-                    override fun onViewInflated(view: View) {
+                    override fun onViewInflated(view: View, showcase: FancyShowCaseView) {
                         view.findViewById<View>(R.id.btn_action_1).setOnClickListener(mClickListener)
                     }
                 })

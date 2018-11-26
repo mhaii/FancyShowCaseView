@@ -42,7 +42,7 @@ class AnimatedActivity : BaseActivity() {
         fancyView = FancyShowCaseView.Builder(this)
                 .focusOn(btn_focus)
                 .customView(R.layout.layout_animated_view, object : OnViewInflateListener {
-                    override fun onViewInflated(view: View) {
+                    override fun onViewInflated(view: View, showcase: FancyShowCaseView) {
                         setAnimatedContent(view, fancyView)
                     }
                 })
@@ -51,7 +51,7 @@ class AnimatedActivity : BaseActivity() {
         fancyView2 = FancyShowCaseView.Builder(this)
                 .focusOn(btn_focus2)
                 .customView(R.layout.layout_animated_view, object : OnViewInflateListener {
-                    override fun onViewInflated(view: View) {
+                    override fun onViewInflated(view: View, showcase: FancyShowCaseView) {
                         setAnimatedContent(view, fancyView2)
                     }
                 })

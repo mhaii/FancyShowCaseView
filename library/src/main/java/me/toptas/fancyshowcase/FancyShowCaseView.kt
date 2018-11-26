@@ -459,7 +459,7 @@ class FancyShowCaseView : FrameLayout, ViewTreeObserver.OnGlobalLayoutListener {
     private fun inflateCustomView(@LayoutRes layout: Int, viewInflateListener: OnViewInflateListener?) {
         activity.layoutInflater?.inflate(layout, this, false)?.apply {
             addView(this)
-            viewInflateListener?.onViewInflated(this)
+            viewInflateListener?.onViewInflated(this, this@FancyShowCaseView)
         }
 
     }
@@ -469,7 +469,7 @@ class FancyShowCaseView : FrameLayout, ViewTreeObserver.OnGlobalLayoutListener {
      */
     private fun inflateTitleView() {
         inflateCustomView(R.layout.fancy_showcase_view_layout_title, object : OnViewInflateListener {
-            override fun onViewInflated(view: View) {
+            override fun onViewInflated(view: View, showcase: FancyShowCaseView) {
                 val textView = view.findViewById<View>(R.id.fscv_title) as TextView
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

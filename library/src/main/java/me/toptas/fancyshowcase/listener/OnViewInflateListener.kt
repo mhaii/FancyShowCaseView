@@ -17,11 +17,12 @@
 package me.toptas.fancyshowcase.listener
 
 import android.view.View
+import me.toptas.fancyshowcase.FancyShowCaseView
 
 /**
  * Listener for custom view inflation
  */
 
 interface OnViewInflateListener {
-    fun onViewInflated(view: View)
+    fun onViewInflated(view: View, showcase: FancyShowCaseView)
 }
